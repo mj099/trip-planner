@@ -28,8 +28,8 @@ todays_date = datetime.today().strftime('%Y-%m-%d')
 if 'cal' not in st.session_state:
     st.session_state.cal = 0
 
-
-f = st.file_uploader("Test", accept_multiple_files=False)
+st.write("----------")
+f = st.file_uploader("Upload ordered city data, if applicable", accept_multiple_files=False)
 if f != None:
     df_ = pd.read_csv(f)
     df = pd.DataFrame(
@@ -37,7 +37,6 @@ if f != None:
     )
 
 else:
-        
     try:
         cities = st.session_state.ordered
     except:
@@ -48,17 +47,19 @@ else:
             {"City": cities, "Duration (days)": [None] * len(cities), "Mode of Transport": [None] * len(cities), "Departure time": ["12:00"] * len(cities), "Transport duration": [None] * len(cities)}
         )
 
-if df != None:
+if not df.empty:
+    st.write("---------")
+    st.write("Please populate the table with durations, mode of transport and transport durations.")
     edited_df = st.data_editor(df)
     current_start_date = trip_start_date
-
+  
     for i in range(len(edited_df)):
         duration = int(edited_df.at[i, 'Duration (days)'])
 
         if duration is not None and duration > 0:
             edited_df.at[i, 'From'] = current_start_date
             edited_df.at[i, 'Until'] = current_start_date + timedelta(days=duration)
-            current_start_date = edited_df.at[i, 'Until'] #+ timedelta(days=1)
+            current_start_date = edited_df.at[i, 'Until']
         
         else:
             edited_df.at[i, 'From'] = None
@@ -72,6 +73,7 @@ if df != None:
         file_name="calendar-data.csv",
         mime="application/json"
     )
+
     #============= CALENDAR EVENTS:
     # Initialize events only once
     if 'events' not in st.session_state:

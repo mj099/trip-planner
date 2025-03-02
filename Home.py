@@ -53,6 +53,7 @@ if 'folium_map' not in st.session_state:
 try:
     data = json.loads(st.session_state.output_data)
 except:
+    data = None
     st.write("Go to the Locator page.")
 
 #Uploaded file takes precedence 
