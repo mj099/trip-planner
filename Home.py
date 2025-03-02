@@ -48,15 +48,22 @@ if 'button_clicked' not in st.session_state:
 if 'folium_map' not in st.session_state:
     st.session_state.folium_map = None
 
-f = st.file_uploader("Upload your JSON File", accept_multiple_files=False)
+#===================================================
 
+try:
+    data = json.loads(st.session_state.output_data)
+except:
+    st.write("Go to the Locator page.")
+
+#Uploaded file takes precedence 
+f = st.file_uploader("Upload your JSON File", accept_multiple_files=False)
 if f is not None:
     bytes_data = f.getvalue()
     string_io = StringIO(bytes_data.decode("utf-8"))
     data = json.load(string_io)
 
-else:
-    data = json.loads(st.session_state.output_data)
+#===================================================
+
 
 if data is not None:
     cObjs = [CITY(item["name"], item["country"], item["LAT"], item["LON"]) for item in data]
